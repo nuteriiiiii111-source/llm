@@ -79,7 +79,7 @@ async function send() {
 </script>
 
 <template>
-    <div id="blur" v-if="blur" />
+    <div id="blur" :style="{ opacity: blur ? '1' : '0' }" />
 
     <div
         id="container"
@@ -162,6 +162,7 @@ body {
 }
 #blur {
     width: 78dvw;
+    transition: 0.2s ease-in-out;
     border-radius: 0 0 100% 100%;
     height: 70px;
     position: absolute;
@@ -169,9 +170,10 @@ body {
     z-index: 2;
     background: radial-gradient(
         50% 100% at center top,
-        rgba(28, 0, 41, 0.8) 0%,
-        rgba(28, 0, 41, 0.9) 50%,
-        transparent 95%
+        rgba(28, 0, 41, 0.95) 0%,
+        rgba(28, 0, 41, 0.7) 20%,
+        rgba(28, 0, 41, 0.3) 60%,
+        rgba(28, 0, 41, 0) 90%
     );
     pointer-events: none;
 }
