@@ -9,29 +9,50 @@ interface Message {
 
 const messages = ref<Message[]>([]);
 const txt = ref("");
+const is_waiting = ref(false);
 
 function to_html(text: string): string {
     if (!text) return "";
     return marked.parse(text) as string;
 }
 
-function send() {
-    if (txt.value.trim() != " " && txt.value.trim() != "") {
+function waiting(is_waiting: boolean) {
+    if (is_waiting) {
+        console.log("czeka");
+    } else {
+        console.log("nie czeka");
+    }
+}
+
+async function send() {
+    // Sprawdzamy stan ref-a (.value)
+    if (txt.value.trim() !== "" && !is_waiting.value) {
+        const userMessage = txt.value;
         messages.value.push({
             role: "user",
-            content: txt.value,
+            content: userMessage,
         });
-        fetch(`http://127.0.0.1:8000/?message=${encodeURIComponent(txt.value)}`)
-            .then((response) => {
-                return response.text();
-            })
-            .then((text) => {
-                messages.value.push({
-                    role: "llm",
-                    content: to_html(text),
-                });
-            });
+
         txt.value = "";
+        is_waiting.value = true;
+        waiting(is_waiting.value);
+
+        try {
+            const response = await fetch(
+                `http://127.0.0.1:8000/?message=${encodeURIComponent(userMessage)}`,
+            );
+            const text = await response.text();
+
+            messages.value.push({
+                role: "llm",
+                content: to_html(text),
+            });
+        } catch (error) {
+            console.error("Błąd fetch:", error);
+        } finally {
+            is_waiting.value = false;
+            waiting(is_waiting.value);
+        }
     }
 }
 </script>
@@ -54,7 +75,11 @@ function send() {
                 }"
             />
         </div>
-        <form id="form" @submit.prevent="send">
+        <form
+            id="form"
+            @submit.prevent="send"
+            :style="{ opacity: is_waiting ? '0.6' : '1' }"
+        >
             <input
                 id="text"
                 type="text"
@@ -193,7 +218,7 @@ body {
 
 #message {
     width: 842px;
-    margin: 80px auto 20px;
+    margin: 30px auto 20px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
