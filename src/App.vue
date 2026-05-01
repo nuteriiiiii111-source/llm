@@ -23,15 +23,13 @@ let observer: IntersectionObserver | null = null;
 onMounted(() => {
     observer = new IntersectionObserver(
         (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    console.log("false");
-                    blur.value = false;
-                } else {
-                    blur.value = true;
-                    console.log("true");
-                }
-            });
+            const entry = entries[0];
+
+            if (entry.isIntersecting) {
+                blur.value = false;
+            } else {
+                blur.value = true;
+            }
         },
         {
             root: document.getElementById("container"),
