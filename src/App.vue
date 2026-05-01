@@ -16,21 +16,23 @@ function to_html(text: string): string {
 }
 
 function send() {
-    messages.value.push({
-        role: "user",
-        content: txt.value,
-    });
-    fetch(`http://127.0.0.1:8000/?message=${encodeURIComponent(txt.value)}`)
-        .then((response) => {
-            return response.text();
-        })
-        .then((text) => {
-            messages.value.push({
-                role: "llm",
-                content: to_html(text),
-            });
+    if (txt.value.trim() != " " && txt.value.trim() != "") {
+        messages.value.push({
+            role: "user",
+            content: txt.value,
         });
-    txt.value = "";
+        fetch(`http://127.0.0.1:8000/?message=${encodeURIComponent(txt.value)}`)
+            .then((response) => {
+                return response.text();
+            })
+            .then((text) => {
+                messages.value.push({
+                    role: "llm",
+                    content: to_html(text),
+                });
+            });
+        txt.value = "";
+    }
 }
 </script>
 
