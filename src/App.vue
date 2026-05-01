@@ -75,10 +75,15 @@ async function send() {
                 }"
             />
         </div>
+
+        <div id="animation" v-if="is_waiting">
+            <span></span><span></span><span></span><span></span>
+        </div>
+
         <form
             id="form"
             @submit.prevent="send"
-            :style="{ opacity: is_waiting ? '0.6' : '1' }"
+            :style="{ opacity: is_waiting ? '0.5' : '1' }"
         >
             <input
                 id="text"
@@ -119,6 +124,44 @@ body {
         border: 2px solid rgba(255, 255, 255, 0.1);
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
         backdrop-filter: blur(20px);
+    }
+}
+#animation {
+    margin: 10px auto;
+    display: flex;
+    padding-left: 40px;
+    width: 844px;
+}
+#animation span {
+    width: 12px;
+    height: 12px;
+    background: #f2deff;
+    display: inline-block;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+#animation span:nth-child(1) {
+    animation-delay: -0.48s;
+}
+#animation span:nth-child(2) {
+    animation-delay: -0.32s;
+}
+#animation span:nth-child(3) {
+    animation-delay: -0.16s;
+}
+#animation span:nth-child(4) {
+    animation-delay: -0.08s;
+}
+
+@keyframes bounce {
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+    40% {
+        transform: scale(1);
     }
 }
 
@@ -163,6 +206,7 @@ body {
     corner-shape: squircle;
     padding: 20px;
     width: 800px;
+    transition: 0.5s ease-in-out;
 }
 
 #form:focus-within {
