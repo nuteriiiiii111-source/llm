@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 import { marked } from "marked";
 
 interface Message {
@@ -16,16 +16,39 @@ function to_html(text: string): string {
     return marked.parse(text) as string;
 }
 
-function waiting(is_waiting: boolean) {
-    if (is_waiting) {
-        console.log("czeka");
-    } else {
-        console.log("nie czeka");
+const bottomObserver = ref(null);
+const blur = ref(false);
+let observer: IntersectionObserver | null = null;
+
+onMounted(() => {
+    observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    console.log("false");
+                    blur.value = false;
+                } else {
+                    blur.value = true;
+                    console.log("true");
+                }
+            });
+        },
+        {
+            root: document.getElementById("container"),
+            threshold: 1.0,
+        },
+    );
+
+    if (bottomObserver.value) {
+        observer.observe(bottomObserver.value);
     }
-}
+});
+
+onUnmounted(() => {
+    if (observer) observer.disconnect();
+});
 
 async function send() {
-    // Sprawdzamy stan ref-a (.value)
     if (txt.value.trim() !== "" && !is_waiting.value) {
         const userMessage = txt.value;
         messages.value.push({
@@ -35,7 +58,6 @@ async function send() {
 
         txt.value = "";
         is_waiting.value = true;
-        waiting(is_waiting.value);
 
         try {
             const response = await fetch(
@@ -51,19 +73,25 @@ async function send() {
             console.error("Błąd fetch:", error);
         } finally {
             is_waiting.value = false;
-            waiting(is_waiting.value);
         }
     }
 }
 </script>
 
 <template>
+    <div id="blur" v-if="blur" />
+
     <div
         id="container"
         :class="{
             started: messages.length > 0,
         }"
     >
+        <div
+            ref="bottomObserver"
+            style="height: 1px; z-index: 99; position: relative; top: 60px"
+        />
+
         <div id="message" v-if="messages.length > 0">
             <div
                 id="mess"
@@ -131,6 +159,21 @@ body {
     display: flex;
     padding-left: 40px;
     width: 844px;
+}
+#blur {
+    width: 78dvw;
+    border-radius: 0 0 100% 100%;
+    height: 70px;
+    position: absolute;
+    top: 9.1dvh;
+    z-index: 2;
+    background: radial-gradient(
+        50% 100% at center top,
+        rgba(28, 0, 41, 0.8) 0%,
+        rgba(28, 0, 41, 0.9) 50%,
+        transparent 95%
+    );
+    pointer-events: none;
 }
 #animation span {
     width: 12px;
