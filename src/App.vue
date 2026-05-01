@@ -110,8 +110,10 @@ body {
     background-color: rgba(0, 0, 0, 0);
     border: 2px solid rgba(255, 255, 255, 0);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0);
-    overflow-x: hidden;
+    justify-content: flex-start;
+    overflow-y: auto;
     scrollbar-width: none;
+    overflow-x: hidden;
     padding-bottom: 14px;
 
     &.started {
@@ -121,11 +123,14 @@ body {
 
 #form {
     display: flex;
+    position: sticky;
+    bottom: 20px;
+    z-index: 10;
     margin-top: auto;
     justify-content: space-around;
     background: rgba(28, 0, 41, 0.6);
     backdrop-filter: blur(20px) brightness(1.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.1);
     border-top: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50px;
     corner-shape: squircle;
@@ -185,17 +190,13 @@ body {
 }
 
 #message {
-    overflow-y: scroll;
-    scrollbar-width: none;
-    border-radius: 50px;
-    corner-shape: squircle;
     width: 842px;
-    margin: auto auto 0;
+    margin: 80px auto 20px;
     display: flex;
-    overflow-wrap: anywhere;
     flex-direction: column;
-    margin-top: 80px;
     align-items: flex-end;
+    border-radius: 50px;
+    overflow-wrap: anywhere;
 }
 
 #mess {
