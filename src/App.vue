@@ -160,11 +160,10 @@ body {
 }
 #blur {
     width: 78dvw;
-    transition: 0.2s ease-in-out;
+    transition: 0.3s ease-in-out;
     border-radius: 0 0 100% 100%;
     height: 70px;
-    position: absolute;
-    top: 9.1dvh;
+    margin-bottom: -70px;
     z-index: 2;
     background: radial-gradient(
         50% 100% at center top,
